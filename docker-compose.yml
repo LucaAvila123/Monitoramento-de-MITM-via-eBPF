@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  victim:
+    image: handsonsecurity/seed-ubuntu:large
+    container_name: victim-10.9.0.5
+    tty: true
+    networks:
+      mitm-net:
+        ipv4_address: 10.9.0.5
+
+  server:
+    image: handsonsecurity/seed-ubuntu:large
+    container_name: server-10.9.0.6
+    tty: true
+    networks:
+      mitm-net:
+        ipv4_address: 10.9.0.6
+
+  attacker:
+    image: handsonsecurity/seed-ubuntu:large
+    container_name: attacker-10.9.0.99
+    tty: true
+    privileged: true
+    entrypoint: >
+      bash -c "
+      apt-get update && apt-get install -y dsniff &&
+      sysctl -w net.ipv4.ip_forward=1 &&
+      exec bash
+      "
+    networks:
+      mitm-net:
+        ipv4_address: 10.9.0.99
+
+networks:
+  mitm-net:
+    ipam:
+      config:
+        - subnet: 10.9.0.0/24
