@@ -32,6 +32,24 @@ services:
       mitm-net:
         ipv4_address: 10.9.0.99
 
+  falco:
+    image: falcosecurity/falco:latest
+    container_name: falco
+    privileged: true
+    environment:
+      - FALCO_STDOUT_OUTPUT_ENABLED=true
+      - FALCO_JSON_OUTPUT=false
+      - FALCO_MODERN_EBPF_TOCTOU_MITIGATION_ENABLED=false 
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev:/host/dev
+      - /proc:/host/proc:ro
+      - /boot:/host/boot:ro
+      - /lib/modules:/host/lib/modules:ro
+      - ./custom_rules.yaml:/etc/falco/rules.d/custom_rules.yaml:ro
+    command: ["/usr/bin/falco"]
+    restart: always
+
 networks:
   mitm-net:
     ipam:

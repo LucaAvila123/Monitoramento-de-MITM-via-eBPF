@@ -1,0 +1,5 @@
+- rule: MITM Attack Detected via arpspoof
+  desc: Detecta quando o utilitario arpspoof tenta abrir sockets AF_PACKET para envenenamento de rede.
+  condition: evt.type = socket and evt.arg.domain = 17 and proc.name = "arpspoof"
+  output: "ALERTA CRITICO DE MITM: Processo arpspoof detectado iniciando ataque no container (pid=%proc.pid container_id=%container.id cmdline=%proc.cmdline)"
+  priority: CRITICAL
